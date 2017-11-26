@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html ng-app="demo">
+
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name=""_csrf
+    <title>Title</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <script src="/register.js"></script>
+</head>
+<body>
+<div ng-controller="Hello">
+    <form novalidate class="register-form">
+        <label>username: <input type="text" ng-model="user.username" name="username" username/></label><br/>
+        <label>pwd: <input type="password" ng-model="user.password"/></label><br/>
+        <input type="button" ng-click="reset()" value="Reset"/>
+        <input type="submit" ng-click="register(user)" value="Register"/>
+    </form>
+</div>
+
+
+</body>
+</html>

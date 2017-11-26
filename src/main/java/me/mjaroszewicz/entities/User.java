@@ -1,13 +1,14 @@
-package entities;
+package me.mjaroszewicz.entities;
 
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @Entity
-public class User {
+public class User implements Serializable{
 
     @Id
     @GeneratedValue()
@@ -17,9 +18,7 @@ public class User {
 
     private String password;
 
-    private ArrayList<Expense> expenses;
-
-    private ArrayList<Income> incomes;
+    private ArrayList<BalanceChange> balanceChanges;
 
     public Long getId() {
         return id;
@@ -45,28 +44,20 @@ public class User {
         this.password = password;
     }
 
-    public ArrayList<Expense> getExpenses() {
-        return expenses;
+    public ArrayList<BalanceChange> getBalanceChanges() {
+        return balanceChanges;
     }
 
-    public void setExpenses(ArrayList<Expense> expenses) {
-        this.expenses = expenses;
+    public void setBalanceChanges(ArrayList<BalanceChange> balanceChanges) {
+        this.balanceChanges = balanceChanges;
     }
 
-    public ArrayList<Income> getIncomes() {
-        return incomes;
+    public boolean addBalanceChange(BalanceChange e){
+        return balanceChanges.add(e);
     }
 
-    public void setIncomes(ArrayList<Income> incomes) {
-        this.incomes = incomes;
-    }
-
-    public boolean addExpense(Expense e){
-        return expenses.add(e);
-    }
-
-    public boolean addIncome(Income e){
-        return incomes.add(e);
+    public User(){
+        this.balanceChanges = new ArrayList<>();
     }
 
     @Override
