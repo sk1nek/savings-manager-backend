@@ -22,14 +22,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-//    @Bean
-//    public DaoAuthenticationProvider authenticationProvider(){
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(userDetailsService);
-//        authProvider.setPasswordEncoder(passwordEncoder);
-//        return authProvider;
-//    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -39,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/register", "/landing", "/css/**","/api/**","/test").permitAll()
+                .antMatchers("/register.html", "/landing", "/css/**","/api/**","/test").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -52,12 +44,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout().permitAll();
     }
 
-
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication().withUser("username").password("password").roles("USER");
-//
-//    }
 }
 
 

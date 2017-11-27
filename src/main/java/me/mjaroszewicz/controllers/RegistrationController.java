@@ -30,13 +30,13 @@ public class RegistrationController {
 
     @Autowired
     private SecurityService securityService;
-
-    @GetMapping("/user/registration")
-    public String getRegistratioNForm(WebRequest request, Model mdl){
-        UserDto userDto = new UserDto();
-        mdl.addAttribute("user", userDto);
-        return "registration";
-    }
+//
+//    @GetMapping("/user/registration")
+//    public String getRegistratioNForm(WebRequest request, Model mdl){
+//        UserDto userDto = new UserDto();
+//        mdl.addAttribute("user", userDto);
+//        return "registration";
+//    }
 
     @PostMapping("/user/registration")
     public ResponseEntity<String> registerUserAccount(@RequestBody UserDto userDto, BindingResult result, WebRequest request, Errors err){
