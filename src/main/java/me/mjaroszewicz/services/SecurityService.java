@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 @Service
 public class SecurityService {
 
@@ -26,6 +28,11 @@ public class SecurityService {
     private UserRepository userRepo;
 
     private static final Logger log = LoggerFactory.getLogger(SecurityService.class);
+
+    @PostConstruct
+    private void init() throws RegistrationException{
+        registerNewUserAccount(new UserDto("username", "password"));
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -43,7 +50,11 @@ public class SecurityService {
     }
 
     public void autologin(String username, String password){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        UserDetails userDetails;
+        if(userDetailsService.loadUserByUsername(username) != null)
+            userDetails = userDetailsService.loadUserByUsername(username);
+        else return;
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
         if(usernamePasswordAuthenticationToken.isAuthenticated()){
@@ -54,6 +65,7 @@ public class SecurityService {
 
     }
 
+
     public User registerNewUserAccount(UserDto userdto) throws RegistrationException{
 
         if(!isValidUser(userdto)) throw new RegistrationException();
@@ -61,8 +73,6 @@ public class SecurityService {
         User user = new User();
         user.setUsername(userdto.getUsername());
         user.setPassword(passwordEncoder().encode(userdto.getPassword()));
-
-
 
         return userRepo.save(user);
 

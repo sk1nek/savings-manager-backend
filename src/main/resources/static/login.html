@@ -5,14 +5,16 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Title</title>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-    <script src="/test.js"></script>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>-->
+    <!--<script src="/test.js"></script>-->
 </head>
 <body>
-<div ng-controller="Hello">
-    <p>The title is {{greeting.username}}</p>
-    <p>Omg lol {{greeting.password}}</p>
-</div>
+
+<form name="login-form" action="/perform_login" method="post">
+    <input type="text" name="username" value=""/>
+    <input type="password" name="password" value=""/>
+    <input type="submit" name="submit" value="submit"/>
+</form>
 
 </body>
 </html>
