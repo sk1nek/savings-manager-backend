@@ -1,26 +1,33 @@
 package me.mjaroszewicz.entities;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class BalanceChange {
+public class BalanceChange implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "details")
     private String details;
 
-    private Long value;
+    @Column(name = "amount")
+    private Long amount;
 
+    @Column(name = "is_expense")
+    @Type(type = "yes_no")
     private boolean isExpense;
 
+    @Column(name = "timestamp")
+    @Type(type = "long")
     private Long timestamp;
 
     public Long getId() {
@@ -47,12 +54,12 @@ public class BalanceChange {
         this.details = details;
     }
 
-    public Long getValue() {
-        return value;
+    public Long getAmount() {
+        return amount;
     }
 
-    public void setValue(Long value) {
-        this.value = value;
+    public void setAmount(Long amount) {
+        this.amount = amount;
     }
 
     public boolean isExpense() {
@@ -76,7 +83,7 @@ public class BalanceChange {
     public BalanceChange(String title, String details, Long value, boolean isExpense, Long timestamp) {
         this.title = title;
         this.details = details;
-        this.value = value;
+        this.amount = value;
         this.isExpense = isExpense;
         this.timestamp = timestamp;
     }
@@ -87,7 +94,7 @@ public class BalanceChange {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", details='" + details + '\'' +
-                ", value=" + value +
+                ", amount=" + amount +
                 ", isExpense=" + isExpense +
                 ", timestamp=" + timestamp +
                 '}';

@@ -7,10 +7,8 @@ import javax.validation.constraints.Size;
 
 public class UserDto {
 
-    @Size(min = 6, max = 24)
     private String username;
 
-    @Size(min = 6, max = 24)
     private String password;
 
     public String getUsername() {

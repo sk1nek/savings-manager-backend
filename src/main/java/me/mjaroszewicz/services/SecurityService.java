@@ -10,11 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -40,21 +42,11 @@ public class SecurityService {
         return new BCryptPasswordEncoder();
     }
 
-    public User findLoggedInUser() throws UserNotFoundException{
+    public User findLoggedInUser(){
 
-        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        User ret;
-
-
-        if(userDetails != null)
-            ret = userRepo.findOneByUsername(((UserDetails) userDetails).getUsername());
-        else throw new UserNotFoundException("Error has occured during loading of user details");
-
-        if(ret == null)
-            throw new UserNotFoundException("Username not found");
-
-        return ret;
+        return userRepo.findOneByUsername(auth.getName());
     }
 
     public void autologin(String username, String password){

@@ -1,11 +1,12 @@
 package me.mjaroszewicz.entities;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class User implements Serializable{
@@ -18,7 +19,10 @@ public class User implements Serializable{
 
     private String password;
 
-    private ArrayList<BalanceChange> balanceChanges;
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "changes")
+    private List<BalanceChange> balanceChanges;
+
 
     public Long getId() {
         return id;
@@ -44,16 +48,25 @@ public class User implements Serializable{
         this.password = password;
     }
 
-    public ArrayList<BalanceChange> getBalanceChanges() {
+    public List<BalanceChange> getBalanceChanges() {
         return balanceChanges;
     }
 
-    public void setBalanceChanges(ArrayList<BalanceChange> balanceChanges) {
+    public void setBalanceChanges(List<BalanceChange> balanceChanges) {
         this.balanceChanges = balanceChanges;
     }
 
     public boolean addBalanceChange(BalanceChange e){
         return balanceChanges.add(e);
+    }
+
+    public boolean removeBalanceChange(Long id){
+        for(BalanceChange bc: balanceChanges){
+            if(bc.getId() == id)
+                return balanceChanges.remove(bc);
+        }
+
+        return false;
     }
 
     public User(){
@@ -67,6 +80,16 @@ public class User implements Serializable{
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    @JsonIgnore
+    public User getSanitizedUser(){
+        User ret = new User();
+        ret.username = this.username;
+        ret.balanceChanges = this.balanceChanges;
+        ret.id = this.id;
+
+        return ret;
     }
 
 
