@@ -3,6 +3,7 @@ package me.mjaroszewicz.services;
 import me.mjaroszewicz.dtos.UserDto;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.exceptions.RegistrationException;
+import me.mjaroszewicz.exceptions.UserNotFoundException;
 import me.mjaroszewicz.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +40,21 @@ public class SecurityService {
         return new BCryptPasswordEncoder();
     }
 
-    public String findLoggerInUsername(){
+    public User findLoggedInUser() throws UserNotFoundException{
 
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
 
-        if(userDetails instanceof UserDetails)
-            return (((UserDetails) userDetails).getUsername());
+        User ret;
 
-        return null;
+
+        if(userDetails != null)
+            ret = userRepo.findOneByUsername(((UserDetails) userDetails).getUsername());
+        else throw new UserNotFoundException("Error has occured during loading of user details");
+
+        if(ret == null)
+            throw new UserNotFoundException("Username not found");
+
+        return ret;
     }
 
     public void autologin(String username, String password){
