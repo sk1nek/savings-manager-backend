@@ -35,15 +35,16 @@ public class UserService {
         User user = new User();
         user.setUsername(userdto.getUsername());
         user.setPassword(passwordEncoder().encode(userdto.getPassword()));
+        user.setEmail(userdto.getEmail());
 
         return userRepo.save(user);
 
     }
 
-    @PostConstruct
-    private void init() throws RegistrationException{
-        registerNewUserAccount(new UserDto("username", "password"));
-    }
+//    @PostConstruct
+//    private void init() throws RegistrationException{
+//        registerNewUserAccount(new UserDto("username", "password"));
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){

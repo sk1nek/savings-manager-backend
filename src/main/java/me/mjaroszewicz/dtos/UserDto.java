@@ -40,9 +40,10 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String username, String password) {
+    public UserDto(String username, String password, String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
 

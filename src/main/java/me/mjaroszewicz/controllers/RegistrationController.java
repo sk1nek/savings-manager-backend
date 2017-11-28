@@ -19,16 +19,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Calendar;
 import java.util.Locale;
 
-@Controller
+@RestController
 public class RegistrationController {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
@@ -48,6 +45,8 @@ public class RegistrationController {
     @PostMapping("/user/registration")
     public ResponseEntity<String> registerUserAccount(@RequestBody UserDto userDto, BindingResult result, WebRequest request, Errors err){
 
+        log.info("Registering");
+
         ResponseEntity<String> ret = new ResponseEntity<>(HttpStatus.ACCEPTED);
         try{
             String appUrl = request.getContextPath();
@@ -57,6 +56,7 @@ public class RegistrationController {
             log.info("hah");
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
+
 
         return ret;
 
