@@ -12,12 +12,15 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent{
 
     private User user;
 
+    private String appUrl;
+
     public OnRegistrationCompleteEvent(
-            User user, Locale locale){
+            User user, Locale locale, String appUrl){
         super(user);
 
         this.user = user;
         this.locale = locale;
+        this.appUrl = appUrl;
 
     }
 
@@ -36,5 +39,13 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent{
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getAppUrl() {
+        return appUrl;
+    }
+
+    public void setAppUrl(String appUrl) {
+        this.appUrl = appUrl;
     }
 }

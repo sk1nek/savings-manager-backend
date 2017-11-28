@@ -50,8 +50,9 @@ public class RegistrationController {
 
         ResponseEntity<String> ret = new ResponseEntity<>(HttpStatus.ACCEPTED);
         try{
+            String appUrl = request.getContextPath();
             User registered = userService.registerNewUserAccount(userDto);
-            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale()));
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), appUrl));
         }catch(RegistrationException ex){
             log.info("hah");
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
