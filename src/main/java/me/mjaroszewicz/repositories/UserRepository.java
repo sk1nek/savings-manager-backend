@@ -12,4 +12,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     public User findOneByUsername(String username);
 
     public ArrayList<User> findAll();
+
+    public User findByEmail(String email);
 }

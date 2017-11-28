@@ -12,12 +12,21 @@ import java.util.List;
 public class User implements Serializable{
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id")
     private Long id;
 
+    @Column(name = "user_name")
     private String username;
 
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "enabled")
+    private boolean enabled;
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "changes")
@@ -46,6 +55,22 @@ public class User implements Serializable{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public List<BalanceChange> getBalanceChanges() {
@@ -79,6 +104,7 @@ public class User implements Serializable{
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", email='" + email +
                 '}';
     }
 

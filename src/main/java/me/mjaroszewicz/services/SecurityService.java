@@ -32,15 +32,9 @@ public class SecurityService {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityService.class);
 
-    @PostConstruct
-    private void init() throws RegistrationException{
-        registerNewUserAccount(new UserDto("username", "password"));
-    }
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+
+
 
     public User findLoggedInUser(){
 
@@ -66,31 +60,7 @@ public class SecurityService {
     }
 
 
-    public User registerNewUserAccount(UserDto userdto) throws RegistrationException{
 
-        if(!isValidUser(userdto)) throw new RegistrationException();
-
-        User user = new User();
-        user.setUsername(userdto.getUsername());
-        user.setPassword(passwordEncoder().encode(userdto.getPassword()));
-
-        return userRepo.save(user);
-
-    }
-
-    private boolean isValidUser(UserDto user){
-
-        if(user.getPassword() == null || user.getUsername() == null)
-            return false;
-
-        if((user.getUsername().length() < 6) || (user.getUsername().length() > 32))
-            return false;
-
-        if((user.getPassword().length() < 8) || (user.getPassword().length() > 32))
-            return false;
-
-        return true;
-    }
 
 
 }
