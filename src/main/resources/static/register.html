@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8"/>
-    <meta name=""_csrf
+    <meta name="_csr"/>
     <title>Title</title>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
     <script src="/register.js"></script>
@@ -14,6 +14,7 @@
     <form novalidate class="register-form">
         <label>username: <input type="text" ng-model="user.username" name="username" username/></label><br/>
         <label>pwd: <input type="password" ng-model="user.password"/></label><br/>
+        <label>email: <input type="email" ng-model="user.email"/></label><br/>
         <input type="button" ng-click="reset()" amount="Reset"/>
         <input type="submit" ng-click="register(user)" amount="Register"/>
     </form>
