@@ -24,7 +24,7 @@ public class UserApiController {
 
     @GetMapping(value = {"", "/"})
     public User getCurrentUser() {
-        return securityService.findLoggedInUser();
+        return securityService.findLoggedInUser().getSanitizedUser();
     }
 
     @PostMapping("/addbalancechange")

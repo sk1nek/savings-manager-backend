@@ -25,7 +25,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Calendar;
 import java.util.Locale;
 
-@RestController
+@Controller
 public class RegistrationController {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);

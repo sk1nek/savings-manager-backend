@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 
 
+import java.util.Properties;
 import java.util.UUID;
 
 @Component
@@ -22,9 +23,17 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     public JavaMailSenderImpl mailSender(){
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        mailSender.setProtocol("SMTP");
-        mailSender.setHost("1270.0.01");
-        mailSender.setPort(25);
+        Properties props = new Properties();
+        props.put("mail.smtp.starttls.enable", true);
+
+        mailSender.setProtocol("smtp");
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setUsername("janekmarcinjanek@gmail.com");
+        mailSender.setPassword("foobarfoobar");
+        mailSender.setJavaMailProperties(props);
+
+        mailSender.setPort(587);
+
 
         return mailSender;
     }
@@ -51,13 +60,13 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         String recipientEmail = usr.getEmail();
         String subject = "Registration";
         String confirmationUrl = evt.getAppUrl() + "/registrationConfirm.html?token=" + token;
-//        String message = messageSource.getMessage("message.recSucc", null, evt.getLocale());
         String message = "msg"; //fix dis
 
         SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setFrom("skinek1942@gmail.com");
         mail.setTo(recipientEmail);
         mail.setSubject(subject);
-        mail.setText(message + " rn" + "http://localhost:8080" + confirmationUrl);
+        mail.setText("http://localhost:8080" + confirmationUrl);
         mailSender.send(mail);
         System.out.println("Sending");
     }

@@ -13,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-
 @Service
 public class UserService {
 
@@ -40,11 +38,6 @@ public class UserService {
         return userRepo.save(user);
 
     }
-
-//    @PostConstruct
-//    private void init() throws RegistrationException{
-//        registerNewUserAccount(new UserDto("username", "password"));
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
