@@ -5,10 +5,15 @@ import me.mjaroszewicz.entities.BalanceChange;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.repositories.UserRepository;
 import me.mjaroszewicz.services.SecurityService;
+import me.mjaroszewicz.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 @RestController
 @RequestMapping("/api/user")
@@ -21,6 +26,9 @@ public class UserApiController {
 
     @Autowired
     private SecurityService securityService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping(value = {"", "/"})
     public User getCurrentUser() {
@@ -48,6 +56,21 @@ public class UserApiController {
         User usr = getCurrentUser();
         usr.removeBalanceChange(id);
         userRepo.save(usr);
+
+    }
+
+    /**
+     * @param password new password, must be at least 8 characters long
+     * @return HTTP status 406 if password is too short, 200 if operation was succesful
+     */
+    @PostMapping("/changepassword")
+    public ResponseEntity<String> changeUserPassword(@Payload String password) {
+
+        if(userService.changeCurrentUserPassword(password)){
+            return new ResponseEntity<>("Password too short", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>("Password successfully changed", HttpStatus.OK);
 
     }
 }

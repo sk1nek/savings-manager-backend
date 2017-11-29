@@ -32,10 +32,6 @@ public class SecurityService {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityService.class);
 
-
-
-
-
     public User findLoggedInUser(){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

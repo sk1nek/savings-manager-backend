@@ -114,6 +114,7 @@ public class User implements Serializable{
         ret.username = this.username;
         ret.balanceChanges = this.balanceChanges;
         ret.id = this.id;
+        ret.email = this.email;
 
         return ret;
     }
