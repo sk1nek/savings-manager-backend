@@ -1,11 +1,13 @@
 package me.mjaroszewicz.controllers;
 
 
+import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.repositories.UserRepository;
 import me.mjaroszewicz.services.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -16,6 +18,18 @@ public class AdminApiController {
 
     @Autowired
     private UserRepository userRepo;
+
+    @PostMapping("/getuserbyid")
+    public ResponseEntity<Object> getUserById(@RequestParam("id") Long id) {
+        User usr = userRepo.findOne(id);
+
+        if(usr == null)
+            return new ResponseEntity<>("There is no such user", HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(usr, HttpStatus.FOUND);
+    }
+
+
 
 
 }

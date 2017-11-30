@@ -64,10 +64,7 @@ public class UserService {
         if((user.getUsername().length() < 6) || (user.getUsername().length() > 32))
             return false;
 
-        if((user.getPassword().length() < 8) || (user.getPassword().length() > 32))
-            return false;
-
-        return true;
+        return (user.getPassword().length() >= 8) && (user.getPassword().length() <= 32);
     }
 
     /**
@@ -152,6 +149,19 @@ public class UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         return userRepo.findOneByUsername(auth.getName());
+    }
+
+    public boolean changeCurrentUserFirstName(String name){
+
+
+        if(name.length() < 2 || name.length() > 32)
+            return false;
+
+        User usr = getLoggedUser();
+        usr.setFirstName(name);
+        userRepo.save(usr);
+
+        return true;
     }
 
 

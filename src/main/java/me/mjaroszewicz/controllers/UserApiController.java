@@ -76,4 +76,19 @@ public class UserApiController {
         return new ResponseEntity<>("Password successfully changed", HttpStatus.OK);
 
     }
+
+    /**
+     * @param value new name
+     * @return 406 if new name is either too short or too long (accepted length is 3-32 characters)
+     */
+    @PostMapping("/changefirstname")
+    public ResponseEntity<String> changeUserFirstName(@RequestParam("value") String value) {
+
+            if(userService.changeCurrentUserFirstName(value))
+                return new ResponseEntity<String>("Name length should be between 3 and 32 characters.", HttpStatus.NOT_ACCEPTABLE);
+
+        return new ResponseEntity<String>("First name changed to " + value + ".", HttpStatus.OK);
+    }
+
+
 }

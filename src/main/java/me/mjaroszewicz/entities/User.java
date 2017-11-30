@@ -2,10 +2,12 @@ package me.mjaroszewicz.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -26,12 +28,22 @@ public class User implements Serializable{
     private String email;
 
     @Column(name = "enabled")
+    @Type(type = "yes_no")
     private boolean enabled;
+
+    @Column(name = "first_name")
+    private String firstName;
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "changes")
     private List<BalanceChange> balanceChanges;
 
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")    )
+    private HashSet<Role> roles;
 
     public Long getId() {
         return id;
@@ -73,6 +85,14 @@ public class User implements Serializable{
         this.enabled = enabled;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public List<BalanceChange> getBalanceChanges() {
         return balanceChanges;
     }
@@ -93,6 +113,23 @@ public class User implements Serializable{
 
         return false;
     }
+
+    public HashSet<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(HashSet<Role> roles) {
+        this.roles = roles;
+    }
+
+    public boolean addRole(Role role){
+        if(roles == null)
+            return false;
+
+        return roles.add(role);
+    }
+
+
 
     public User(){
         this.balanceChanges = new ArrayList<>();
