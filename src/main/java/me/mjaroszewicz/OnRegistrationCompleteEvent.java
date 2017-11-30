@@ -24,7 +24,6 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent{
 
     }
 
-
     public Locale getLocale() {
         return locale;
     }

@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class UserService {
 
@@ -23,6 +25,9 @@ public class UserService {
 
     @Autowired
     private VerificationTokenRepository tokenRepo;
+
+    @Autowired
+    private MailService mailService;
 
     @Transactional
     public User registerNewUserAccount(UserDto userdto) throws RegistrationException {
@@ -46,6 +51,11 @@ public class UserService {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     *
+     * @param user Data Transfer Object containing user credentials
+     * @return true if length criteria are met (username at least 6 characters / password at least 8)
+     */
     private boolean isValidUser(UserDto user){
 
         if(user.getPassword() == null || user.getUsername() == null)
@@ -96,14 +106,35 @@ public class UserService {
         return true;
     }
 
-    public VerificationToken createVerificationToken(User usr, String token){
+    /**
+     * Creates new verification token and forwards it to persistance layer
+     *
+     * @param usr Target user
+     */
+    public VerificationToken createVerificationToken(User usr){
+
         VerificationToken ret = new VerificationToken();
-        ret.setToken(token);
+        ret.setToken(UUID.randomUUID().toString());
         ret.setUser(usr);
 
         tokenRepo.save(ret);
         return ret;
     }
+
+
+    public void sendVerificationMail(User usr, String appUrl){
+
+        tokenRepo.delete(tokenRepo.findByUser(usr));
+
+        VerificationToken token = createVerificationToken(usr);
+        String recipient = usr.getEmail();
+        String confirmationUrl = appUrl + "/registrationConfirm.html?token=" + token.getToken();
+        String content = "http://localhost:8080" + confirmationUrl;
+
+        mailService.sendEmail("Registration", content, recipient);
+    }
+
+
 
     public VerificationToken getVerificationToken(String token){
         return tokenRepo.findByToken(token);
@@ -114,7 +145,6 @@ public class UserService {
     }
 
     /**
-     *
      * @return Currently logged user reference
      */
     private User getLoggedUser(){

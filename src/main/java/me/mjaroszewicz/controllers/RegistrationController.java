@@ -6,6 +6,7 @@ import me.mjaroszewicz.dtos.UserDto;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.entities.VerificationToken;
 import me.mjaroszewicz.exceptions.RegistrationException;
+import me.mjaroszewicz.repositories.UserRepository;
 import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,7 +42,8 @@ public class RegistrationController {
     ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    private MessageSource messages;
+    private UserRepository userRepo;
+
 
     @PostMapping("/user/registration")
     public ResponseEntity<String> registerUserAccount(@RequestBody UserDto userDto, BindingResult result, WebRequest request, Errors err){
@@ -84,6 +87,24 @@ public class RegistrationController {
         userService.saveRegisteredUser(usr);
 
         return "redirect:/landing.html";
+
+    }
+
+    @GetMapping("/resendconfirmation")
+    public String resendConfirmation(@RequestParam("username") String username, WebRequest request){
+
+        User usr;
+
+        if((usr = userRepo.findOneByUsername(username)) == null)
+            return "redirect:/error.html?user=nonexistent";
+
+        if(usr.isEnabled())
+            return "redirect:/error.html?user=active";
+
+
+        userService.sendVerificationMail(usr, request.getContextPath());
+
+        return "redirect:/success.html";
 
     }
 
