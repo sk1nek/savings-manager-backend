@@ -22,7 +22,6 @@ public class MailService {
 
         Properties props = new Properties();
         props.put("mail.smtp.user", "janekmarcinjanek@gmail.com");
-        props.put("mail.smtp.password", "foobarfoobar");
         props.put("mail.smtp.from", "janekmarcinjanek@gmail.com");
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.starttls.enable", true);

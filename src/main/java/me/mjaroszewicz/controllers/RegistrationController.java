@@ -33,9 +33,6 @@ public class RegistrationController {
     private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
     @Autowired
-    private SecurityService securityService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -48,64 +45,59 @@ public class RegistrationController {
     @PostMapping("/user/registration")
     public ResponseEntity<String> registerUserAccount(@RequestBody UserDto userDto, BindingResult result, WebRequest request, Errors err){
 
-        log.info("Registering");
-
-        ResponseEntity<String> ret = new ResponseEntity<>(HttpStatus.ACCEPTED);
         try{
             String appUrl = request.getContextPath();
             User registered = userService.registerNewUserAccount(userDto);
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), appUrl));
+
         }catch(RegistrationException ex){
-            log.info("hah");
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
 
-
-        return ret;
+        return new ResponseEntity<>("Account successfully registered, check your mailbox for confirmation e-mail.", HttpStatus.OK);
 
     }
 
     @GetMapping("/registrationConfirm")
-    public String confirmRegistration(WebRequest request, Model mdl, @RequestParam String token){
+    public ResponseEntity<String> confirmRegistration(WebRequest request, Model mdl, @RequestParam String token){
 
         Locale loc = request.getLocale();
 
         VerificationToken vt = userService.getVerificationToken(token);
 
         if(vt == null){
-            //handle invalid token
+            return new ResponseEntity<>("Invalid token.", HttpStatus.NOT_FOUND);
         }
 
         User usr = vt.getUser();
         Calendar cal = Calendar.getInstance();
 
         if((vt.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0){
-            //handle expired token
+            return new ResponseEntity<>("Verification token expired", HttpStatus.NOT_ACCEPTABLE);
         }
 
         usr.setEnabled(true);
         userService.saveRegisteredUser(usr);
 
-        return "redirect:/landing.html";
+        return new ResponseEntity<>("E-mail succesfully confirmed", HttpStatus.OK);
 
     }
 
     @GetMapping("/resendconfirmation")
-    public String resendConfirmation(@RequestParam("username") String username, WebRequest request){
+    public ResponseEntity<String> resendConfirmation(@RequestParam("username") String username, WebRequest request){
 
         User usr;
 
         if((usr = userRepo.findOneByUsername(username)) == null)
-            return "redirect:/error.html?user=nonexistent";
+            return new ResponseEntity<>("Invalid username.", HttpStatus.NOT_ACCEPTABLE);
 
         if(usr.isEnabled())
-            return "redirect:/error.html?user=active";
+            return new ResponseEntity<>("User already active.", HttpStatus.NOT_ACCEPTABLE);
 
 
         userService.sendVerificationMail(usr, request.getContextPath());
 
-        return "redirect:/success.html";
+        return new ResponseEntity<>("Confirmation email successfully re-sent", HttpStatus.OK);
 
     }
-
 }

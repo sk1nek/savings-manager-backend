@@ -36,7 +36,7 @@ public class UserApiController {
     }
 
     @PostMapping("/addbalancechange")
-    public void addBalanceChange(@RequestBody BalanceChangeDto dto){
+    public ResponseEntity<String> addBalanceChange(@RequestBody BalanceChangeDto dto){
 
         BalanceChange bc = new BalanceChange();
         bc.setDetails(dto.getDetails());
@@ -48,15 +48,18 @@ public class UserApiController {
         User usr = getCurrentUser();
         usr.addBalanceChange(bc);
         userRepo.save(usr);
+
+        return new ResponseEntity<>("Item successfully added", HttpStatus.OK);
     }
 
     @PostMapping("/removebalancechange")
-    public void removeBalanceChange(@RequestParam Long id){
+    public ResponseEntity<String>removeBalanceChange(@RequestParam Long id){
 
         User usr = getCurrentUser();
         usr.removeBalanceChange(id);
         userRepo.save(usr);
 
+        return new ResponseEntity<>("Item successfully removed", HttpStatus.OK);
     }
 
     /**
