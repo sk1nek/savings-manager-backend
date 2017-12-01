@@ -1,10 +1,5 @@
 package me.mjaroszewicz.dtos;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 public class UserDto {
 
     private String username;
@@ -12,6 +7,8 @@ public class UserDto {
     private String password;
 
     private String email;
+
+    private String firstName;
 
     public String getUsername() {
         return username;
@@ -37,17 +34,23 @@ public class UserDto {
         this.email = email;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public UserDto() {
     }
 
-    public UserDto(String username, String password, String email) {
+    public UserDto(String username, String password, String email, String firstName) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.firstName = firstName;
     }
-
-
-
 
     @Override
     public String toString() {
@@ -55,6 +58,7 @@ public class UserDto {
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
                 '}';
     }
 }

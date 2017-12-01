@@ -3,7 +3,6 @@ package me.mjaroszewicz.controllers;
 import me.mjaroszewicz.dtos.BalanceChangeDto;
 import me.mjaroszewicz.entities.BalanceChange;
 import me.mjaroszewicz.entities.User;
-import me.mjaroszewicz.repositories.UserRepository;
 import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 
 @RestController
 @RequestMapping("/api/user")
@@ -29,7 +27,9 @@ public class UserApiController {
 
     @GetMapping(value = {"", "/"})
     public User getCurrentUser() {
-        return securityService.findLoggedInUser().getSanitizedUser();
+        User usr = securityService.getCurrentUser();
+        usr.setPassword(null);
+        return usr;
     }
 
     @PostMapping("/addbalancechange")
@@ -81,7 +81,7 @@ public class UserApiController {
     @PostMapping("/changefirstname")
     public ResponseEntity<String> changeUserFirstName(@RequestParam("value") String value) {
 
-            if(userService.changeCurrentUserFirstName(value))
+            if(!userService.changeUserFirstName(securityService.getCurrentUser(), value))
                 return new ResponseEntity<String>("Name length should be between 3 and 32 characters.", HttpStatus.NOT_ACCEPTABLE);
 
         return new ResponseEntity<String>("First name changed to " + value + ".", HttpStatus.OK);

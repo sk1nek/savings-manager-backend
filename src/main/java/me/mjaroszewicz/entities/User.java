@@ -7,6 +7,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class User implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "user_name")
@@ -38,12 +39,9 @@ public class User implements Serializable{
     @JoinColumn(name = "changes")
     private List<BalanceChange> balanceChanges;
 
-    @ManyToMany
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")    )
-    private HashSet<Role> roles;
+    @Column(name = "roles")
+    @ElementCollection
+    private List<String> roles;
 
     public Long getId() {
         return id;
@@ -114,26 +112,23 @@ public class User implements Serializable{
         return false;
     }
 
-    public HashSet<Role> getRoles() {
+    public List<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(HashSet<Role> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 
-    public boolean addRole(Role role){
-        if(roles == null)
-            return false;
-
-        return roles.add(role);
+    public boolean addRole(String e){
+        return roles.add(e);
     }
-
-
 
     public User(){
         this.balanceChanges = new ArrayList<>();
+        this.roles = new ArrayList<>();
     }
+
 
     @Override
     public String toString() {
@@ -141,22 +136,23 @@ public class User implements Serializable{
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", email='" + email +
+                ", email='" + email + '\'' +
+                ", enabled=" + enabled +
+                ", firstName='" + firstName + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 
-    @JsonIgnore
-    public User getSanitizedUser(){
-        User ret = new User();
-        ret.username = this.username;
-        ret.balanceChanges = this.balanceChanges;
-        ret.id = this.id;
-        ret.email = this.email;
-
-        return ret;
-    }
-
-
-
+//    @JsonIgnore
+//    public User getSanitizedUser(){
+//        User ret = new User();
+//        ret.username = this.username;
+//        ret.balanceChanges = this.balanceChanges;
+//        ret.id = this.id;
+//        ret.email = this.email;
+//        ret.firstName = firstName;
+//
+//        return ret;
+//    }
 
 }

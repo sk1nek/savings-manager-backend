@@ -1,6 +1,7 @@
 package me.mjaroszewicz.controllers;
 
 
+import me.mjaroszewicz.dtos.UserDto;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.repositories.UserRepository;
 import me.mjaroszewicz.services.SecurityService;
@@ -41,12 +42,5 @@ public class AdminApiController {
 
         return new ResponseEntity<>(usr, HttpStatus.FOUND);
     }
-
-//    @PostMapping("/createuse")
-
-
-
-
-
 
 }

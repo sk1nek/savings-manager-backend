@@ -38,7 +38,7 @@ public class RegistrationController {
     ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/user/registration")
-    public ResponseEntity<String> registerUserAccount(@RequestBody UserDto userDto, BindingResult result, WebRequest request, Errors err){
+    public ResponseEntity<String> registerUserAccount(@RequestBody UserDto userDto, WebRequest request){
 
         try{
             String appUrl = request.getContextPath();
@@ -85,7 +85,6 @@ public class RegistrationController {
 
         if(usr.isEnabled())
             return new ResponseEntity<>("User already active.", HttpStatus.NOT_ACCEPTABLE);
-
 
         userService.sendVerificationMail(usr, request.getContextPath());
 

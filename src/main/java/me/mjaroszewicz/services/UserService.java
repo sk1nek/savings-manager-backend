@@ -6,6 +6,8 @@ import me.mjaroszewicz.entities.VerificationToken;
 import me.mjaroszewicz.exceptions.RegistrationException;
 import me.mjaroszewicz.repositories.UserRepository;
 import me.mjaroszewicz.repositories.VerificationTokenRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
@@ -15,10 +17,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.UUID;
 
 @Service
 public class UserService {
+
+    private final static Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepo;
@@ -28,6 +33,11 @@ public class UserService {
 
     @Autowired
     private MailService mailService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     @Transactional
     public User registerNewUserAccount(UserDto userdto) throws RegistrationException {
@@ -41,14 +51,9 @@ public class UserService {
         user.setUsername(userdto.getUsername());
         user.setPassword(passwordEncoder().encode(userdto.getPassword()));
         user.setEmail(userdto.getEmail());
+        user.setFirstName(userdto.getFirstName());
 
         return userRepo.save(user);
-
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 
     /**
@@ -151,21 +156,29 @@ public class UserService {
         return userRepo.findOneByUsername(auth.getName());
     }
 
-    public boolean changeCurrentUserFirstName(String name){
+    public boolean changeUserFirstName(User usr, String name){
 
+        log.error(usr.toString());
+
+//        User usr = userRepo.findOneByUsername(username);
 
         if(name.length() < 2 || name.length() > 32)
             return false;
 
-        User usr = getLoggedUser();
         usr.setFirstName(name);
         userRepo.save(usr);
 
         return true;
     }
 
+    public void setUserRole(User usr, String role) {
+
+        usr.addRole(role);
+        userRepo.save(usr);
+    }
+
     /*
-    Persistance layer accessing methods below
+    Persistence layer accessing methods below
      */
 
     public User findUser(String username){
@@ -179,6 +192,17 @@ public class UserService {
     public void saveUser(User usr){
         userRepo.save(usr);
     }
+
+    @PostConstruct
+    private void createMockAdminAccount() throws RegistrationException{
+        User usr = registerNewUserAccount(new UserDto("adminadmin", "adminadmin", "lol@gmail.com", "krzysztof"));
+
+        usr.setEnabled(true);
+
+        setUserRole(usr, "ROLE_ADMIN");
+        setUserRole(usr, "ROLE_USER");
+    }
+
 
 
 }
