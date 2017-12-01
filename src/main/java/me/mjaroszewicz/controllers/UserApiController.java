@@ -22,9 +22,6 @@ public class UserApiController {
     private static final Logger log = LoggerFactory.getLogger(UserApiController.class);
 
     @Autowired
-    private UserRepository userRepo;
-
-    @Autowired
     private SecurityService securityService;
 
     @Autowired
@@ -47,7 +44,7 @@ public class UserApiController {
 
         User usr = getCurrentUser();
         usr.addBalanceChange(bc);
-        userRepo.save(usr);
+        userService.saveUser(usr);
 
         return new ResponseEntity<>("Item successfully added", HttpStatus.OK);
     }
@@ -57,7 +54,7 @@ public class UserApiController {
 
         User usr = getCurrentUser();
         usr.removeBalanceChange(id);
-        userRepo.save(usr);
+        userService.saveUser(usr);
 
         return new ResponseEntity<>("Item successfully removed", HttpStatus.OK);
     }

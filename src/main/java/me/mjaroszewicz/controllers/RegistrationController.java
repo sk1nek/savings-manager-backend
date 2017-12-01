@@ -1,6 +1,5 @@
 package me.mjaroszewicz.controllers;
 
-
 import me.mjaroszewicz.OnRegistrationCompleteEvent;
 import me.mjaroszewicz.dtos.UserDto;
 import me.mjaroszewicz.entities.User;
@@ -38,10 +37,6 @@ public class RegistrationController {
     @Autowired
     ApplicationEventPublisher eventPublisher;
 
-    @Autowired
-    private UserRepository userRepo;
-
-
     @PostMapping("/user/registration")
     public ResponseEntity<String> registerUserAccount(@RequestBody UserDto userDto, BindingResult result, WebRequest request, Errors err){
 
@@ -55,13 +50,10 @@ public class RegistrationController {
         }
 
         return new ResponseEntity<>("Account successfully registered, check your mailbox for confirmation e-mail.", HttpStatus.OK);
-
     }
 
     @GetMapping("/registrationConfirm")
     public ResponseEntity<String> confirmRegistration(WebRequest request, Model mdl, @RequestParam String token){
-
-        Locale loc = request.getLocale();
 
         VerificationToken vt = userService.getVerificationToken(token);
 
@@ -88,7 +80,7 @@ public class RegistrationController {
 
         User usr;
 
-        if((usr = userRepo.findOneByUsername(username)) == null)
+        if((usr = userService.findUser(username)) == null)
             return new ResponseEntity<>("Invalid username.", HttpStatus.NOT_ACCEPTABLE);
 
         if(usr.isEnabled())

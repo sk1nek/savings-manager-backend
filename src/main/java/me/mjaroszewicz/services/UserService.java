@@ -164,5 +164,21 @@ public class UserService {
         return true;
     }
 
+    /*
+    Persistance layer accessing methods below
+     */
+
+    public User findUser(String username){
+        return userRepo.findOneByUsername(username);
+    }
+
+    public User findUser(Long id){
+        return userRepo.findOne(id);
+    }
+
+    public void saveUser(User usr){
+        userRepo.save(usr);
+    }
+
 
 }
