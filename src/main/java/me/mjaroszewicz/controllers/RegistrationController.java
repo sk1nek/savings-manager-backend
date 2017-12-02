@@ -1,30 +1,23 @@
 package me.mjaroszewicz.controllers;
 
-import me.mjaroszewicz.OnRegistrationCompleteEvent;
+import me.mjaroszewicz.events.OnRegistrationCompleteEvent;
 import me.mjaroszewicz.dtos.UserDto;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.entities.VerificationToken;
 import me.mjaroszewicz.exceptions.RegistrationException;
-import me.mjaroszewicz.repositories.UserRepository;
-import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 @Controller
 public class RegistrationController {
@@ -38,12 +31,13 @@ public class RegistrationController {
     ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/user/registration")
-    public ResponseEntity<String> registerUserAccount(@RequestBody UserDto userDto, WebRequest request){
+    public ResponseEntity<String> registerUserAccount(
+            @RequestBody UserDto userDto, WebRequest request){
 
         try{
             String appUrl = request.getContextPath();
             User registered = userService.registerNewUserAccount(userDto);
-            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), appUrl));
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, appUrl));
 
         }catch(RegistrationException ex){
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
@@ -53,7 +47,9 @@ public class RegistrationController {
     }
 
     @GetMapping("/registrationConfirm")
-    public ResponseEntity<String> confirmRegistration(WebRequest request, Model mdl, @RequestParam String token){
+    public ResponseEntity<String> confirmRegistration(
+            WebRequest request, Model mdl,
+            @RequestParam String token){
 
         VerificationToken vt = userService.getVerificationToken(token);
 
@@ -76,7 +72,9 @@ public class RegistrationController {
     }
 
     @GetMapping("/resendconfirmation")
-    public ResponseEntity<String> resendConfirmation(@RequestParam("username") String username, WebRequest request){
+    public ResponseEntity<String> resendConfirmation(
+            @RequestParam("username") String username,
+            WebRequest request){
 
         User usr;
 

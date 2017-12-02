@@ -1,14 +1,17 @@
 package me.mjaroszewicz.services;
 
 import me.mjaroszewicz.dtos.UserDto;
+import me.mjaroszewicz.entities.PasswordResetToken;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.entities.VerificationToken;
 import me.mjaroszewicz.exceptions.RegistrationException;
+import me.mjaroszewicz.repositories.PasswordResetTokenRepository;
 import me.mjaroszewicz.repositories.UserRepository;
 import me.mjaroszewicz.repositories.VerificationTokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,10 +32,16 @@ public class UserService {
     private UserRepository userRepo;
 
     @Autowired
-    private VerificationTokenRepository tokenRepo;
+    private VerificationTokenRepository verificationTokenRepo;
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepo;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -119,14 +128,14 @@ public class UserService {
         ret.setToken(UUID.randomUUID().toString());
         ret.setUser(usr);
 
-        tokenRepo.save(ret);
+        verificationTokenRepo.save(ret);
         return ret;
     }
 
 
     public void sendVerificationMail(User usr, String appUrl){
 
-        tokenRepo.delete(tokenRepo.findByUser(usr));
+        verificationTokenRepo.delete(verificationTokenRepo.findByUser(usr));
 
         VerificationToken token = createVerificationToken(usr);
         String recipient = usr.getEmail();
@@ -137,10 +146,28 @@ public class UserService {
     }
 
 
-
     public VerificationToken getVerificationToken(String token){
-        return tokenRepo.findByToken(token);
+        return verificationTokenRepo.findByToken(token);
     }
+
+    /*
+    Password reset methods below
+     */
+
+    public PasswordResetToken createPasswordResetToken(User usr){
+        PasswordResetToken ret = new PasswordResetToken();
+        ret.setToken(UUID.randomUUID().toString());
+        ret.setUser(usr);
+
+        passwordResetTokenRepo.save(ret);
+        return ret;
+    }
+
+    public PasswordResetToken getPasswordResetToken(String token){
+        return passwordResetTokenRepo.findOneByToken(token);
+    }
+
+    /**/
 
     public void saveRegisteredUser(User usr){
         userRepo.save(usr);
@@ -175,6 +202,26 @@ public class UserService {
 
         usr.addRole(role);
         userRepo.save(usr);
+
+    }
+
+    public boolean updateUser(User usr){
+
+        User original = userRepo.findOne(usr.getId());
+
+        if(original == null)
+            return false;
+
+        //encoding password
+        String pwd = usr.getPassword();
+        String encoded = passwordEncoder().encode(pwd);
+        usr.setPassword(encoded);
+
+        usr.setBalanceChanges(original.getBalanceChanges());
+        usr.setRoles(original.getRoles());
+
+        userRepo.save(usr);
+        return true;
     }
 
     /*
@@ -189,8 +236,32 @@ public class UserService {
         return userRepo.findOne(id);
     }
 
+    public User findUserByEmail(String email){
+        return userRepo.findByEmail(email);
+    }
+
     public void saveUser(User usr){
         userRepo.save(usr);
+    }
+
+    public boolean deleteUser(String username){
+        User usr = userRepo.findOneByUsername(username);
+
+        if(usr == null)
+            return false;
+
+        userRepo.delete(usr);
+        return true;
+    }
+
+    public boolean deleteUser(Long id){
+        User usr = userRepo.findOne(id);
+
+        if(id == null)
+            return false;
+
+        userRepo.delete(id);
+        return true;
     }
 
     @PostConstruct

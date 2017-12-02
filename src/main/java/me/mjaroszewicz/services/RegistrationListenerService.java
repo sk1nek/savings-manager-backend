@@ -1,15 +1,14 @@
-package me.mjaroszewicz;
+package me.mjaroszewicz.services;
 
+import me.mjaroszewicz.events.OnRegistrationCompleteEvent;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.entities.VerificationToken;
-import me.mjaroszewicz.services.MailService;
-import me.mjaroszewicz.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
+@Service
+public class RegistrationListenerService implements ApplicationListener<OnRegistrationCompleteEvent> {
 
     @Autowired
     private MailService mailService;
@@ -19,7 +18,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
     @Override
     public void onApplicationEvent(OnRegistrationCompleteEvent evt){
-        this.confirmRegistration(evt);
+        confirmRegistration(evt);
     }
 
     private void confirmRegistration(OnRegistrationCompleteEvent evt){
@@ -30,7 +29,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         String confirmationUrl = evt.getAppUrl() + "/registrationConfirm.html?token=" + token.getToken();
         String content = "http://localhost:8080" + confirmationUrl;
         mailService.sendEmail("Registration", content, recipientEmail);
-        System.out.println("Sending");
     }
 
 

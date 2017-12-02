@@ -2,16 +2,21 @@ package me.mjaroszewicz.controllers;
 
 import me.mjaroszewicz.dtos.BalanceChangeDto;
 import me.mjaroszewicz.entities.BalanceChange;
+import me.mjaroszewicz.entities.PasswordResetToken;
 import me.mjaroszewicz.entities.User;
+import me.mjaroszewicz.events.OnPasswordResetEvent;
 import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 @RestController
 @RequestMapping("/api/user")
@@ -24,6 +29,9 @@ public class UserApiController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @GetMapping(value = {"", "/"})
     public User getCurrentUser() {
@@ -86,6 +94,36 @@ public class UserApiController {
 
         return new ResponseEntity<String>("First name changed to " + value + ".", HttpStatus.OK);
     }
+
+    @PostMapping("/forgotpassword")
+    public ResponseEntity<String> requestPasswordReset(@RequestParam("email") String email, WebRequest request) {
+
+        User usr;
+
+        if((usr = userService.findUserByEmail(email)) == null)
+            return new ResponseEntity<>("Invalid e-mail, try again. ", HttpStatus.NOT_FOUND);
+        else
+            eventPublisher.publishEvent(new OnPasswordResetEvent(this, usr, request.getContextPath()));
+
+        return new ResponseEntity<>("E-mail has been sent. Check your inbox. ", HttpStatus.OK);
+    }
+
+    @PostMapping("/passwordreset")
+    public ResponseEntity<String> userPasswordReset(
+            @RequestParam("token") String token,
+            @RequestParam("password") String password){
+
+        PasswordResetToken passwordResetToken;
+
+        if ((passwordResetToken = userService.getPasswordResetToken(token)) != null) {
+            userService.changeUserPassword(passwordResetToken.getUser(), password);
+            return new ResponseEntity<>("Password successfully changed. ", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Could not change password. (Token invalid or expired)", HttpStatus.NOT_ACCEPTABLE);
+    }
+
+
 
 
 }

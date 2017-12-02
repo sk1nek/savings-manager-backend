@@ -1,35 +1,19 @@
-package me.mjaroszewicz;
+package me.mjaroszewicz.events;
 
 import me.mjaroszewicz.entities.User;
 import org.springframework.context.ApplicationEvent;
 
-import java.util.Locale;
-
-public class OnRegistrationCompleteEvent extends ApplicationEvent{
-
-
-    private Locale locale;
+public class OnPasswordResetEvent extends ApplicationEvent {
 
     private User user;
 
     private String appUrl;
 
-    public OnRegistrationCompleteEvent(
-            User user, Locale locale, String appUrl){
-        super(user);
+    public OnPasswordResetEvent(Object src, User user, String appUrl) {
+        super(src);
 
         this.user = user;
-        this.locale = locale;
         this.appUrl = appUrl;
-
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
     public User getUser() {

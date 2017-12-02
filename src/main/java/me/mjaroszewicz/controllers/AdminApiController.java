@@ -22,7 +22,8 @@ public class AdminApiController {
     private UserService userService;
 
     @PostMapping("/getuserbyid")
-    public ResponseEntity<Object> getUserById(@RequestParam("id") Long id) {
+    public ResponseEntity<Object> getUserById(
+            @RequestParam("id") Long id) {
 
         User usr = userService.findUser(id);
 
@@ -33,7 +34,8 @@ public class AdminApiController {
     }
 
     @PostMapping("/getuserbyname")
-    public ResponseEntity<Object> getUserByName(@RequestParam("name") String name){
+    public ResponseEntity<Object> getUserByName(
+            @RequestParam("name") String name){
 
         User usr = userService.findUser(name);
 
@@ -41,6 +43,30 @@ public class AdminApiController {
             return new ResponseEntity<>("THere is no such user", HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(usr, HttpStatus.FOUND);
+    }
+
+    @DeleteMapping("/deleteuser")
+    public ResponseEntity<String> deleteUser(
+            @RequestParam(value = "byname", required = true) Boolean byName,
+            @RequestParam(value = "identifier", required = true) String identifier) {
+
+        if (byName && userService.deleteUser(identifier))
+            return new ResponseEntity<>("User deleted successfully. ", HttpStatus.OK);
+        else if (!byName && userService.deleteUser(Long.parseLong(identifier)))
+            return new ResponseEntity<>("User deleted successfully. ", HttpStatus.OK);
+
+
+        return new ResponseEntity<>("Could not delete specified user. ", HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/updateuser")
+    public ResponseEntity<String> updateUser(
+            @RequestBody User user) {
+
+        if(userService.updateUser(user))
+            return new ResponseEntity<>("User updated successfully. ", HttpStatus.OK);
+
+        return new ResponseEntity<>("Could not update user. ", HttpStatus.NOT_FOUND);
     }
 
 }
