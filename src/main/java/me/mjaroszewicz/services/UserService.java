@@ -1,6 +1,6 @@
 package me.mjaroszewicz.services;
 
-import me.mjaroszewicz.dtos.UserDto;
+import me.mjaroszewicz.dtos.UserRegistrationDto;
 import me.mjaroszewicz.entities.PasswordResetToken;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.entities.VerificationToken;
@@ -49,7 +49,7 @@ public class UserService {
     }
 
     @Transactional
-    public User registerNewUserAccount(UserDto userdto) throws RegistrationException {
+    public User registerNewUserAccount(UserRegistrationDto userdto) throws RegistrationException {
 
         if(!isValidUser(userdto)) throw new RegistrationException("DTO didn't meet specified criteria");
 
@@ -70,7 +70,7 @@ public class UserService {
      * @param user Data Transfer Object containing user credentials
      * @return true if length criteria are met (username at least 6 characters / password at least 8)
      */
-    private boolean isValidUser(UserDto user){
+    private boolean isValidUser(UserRegistrationDto user){
 
         if(user.getPassword() == null || user.getUsername() == null)
             return false;
@@ -266,7 +266,7 @@ public class UserService {
 
     @PostConstruct
     private void createMockAdminAccount() throws RegistrationException{
-        User usr = registerNewUserAccount(new UserDto("adminadmin", "adminadmin", "lol@gmail.com", "krzysztof"));
+        User usr = registerNewUserAccount(new UserRegistrationDto("adminadmin", "adminadmin", "lol@gmail.com", "krzysztof"));
 
         usr.setEnabled(true);
 

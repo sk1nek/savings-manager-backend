@@ -1,6 +1,6 @@
 package me.mjaroszewicz.dtos;
 
-public class UserDto {
+public class UserRegistrationDto {
 
     private String username;
 
@@ -42,10 +42,10 @@ public class UserDto {
         this.firstName = firstName;
     }
 
-    public UserDto() {
+    public UserRegistrationDto() {
     }
 
-    public UserDto(String username, String password, String email, String firstName) {
+    public UserRegistrationDto(String username, String password, String email, String firstName) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -54,7 +54,7 @@ public class UserDto {
 
     @Override
     public String toString() {
-        return "UserDto{" +
+        return "UserRegistrationDto{" +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +

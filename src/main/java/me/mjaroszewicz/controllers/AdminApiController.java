@@ -1,9 +1,7 @@
 package me.mjaroszewicz.controllers;
 
 
-import me.mjaroszewicz.dtos.UserDto;
 import me.mjaroszewicz.entities.User;
-import me.mjaroszewicz.repositories.UserRepository;
 import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,14 +57,13 @@ public class AdminApiController {
         return new ResponseEntity<>("Could not delete specified user. ", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/updateuser")
-    public ResponseEntity<String> updateUser(
-            @RequestBody User user) {
+    @PatchMapping("/updateuser")
+    public ResponseEntity<String> updateUser(@RequestBody User user) {
 
         if(userService.updateUser(user))
-            return new ResponseEntity<>("User updated successfully. ", HttpStatus.OK);
+            return new ResponseEntity<>("User successfully updated", HttpStatus.OK);
 
-        return new ResponseEntity<>("Could not update user. ", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("User not found. ", HttpStatus.NOT_FOUND);
     }
 
 }

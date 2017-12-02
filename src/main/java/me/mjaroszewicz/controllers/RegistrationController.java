@@ -1,7 +1,7 @@
 package me.mjaroszewicz.controllers;
 
 import me.mjaroszewicz.events.OnRegistrationCompleteEvent;
-import me.mjaroszewicz.dtos.UserDto;
+import me.mjaroszewicz.dtos.UserRegistrationDto;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.entities.VerificationToken;
 import me.mjaroszewicz.exceptions.RegistrationException;
@@ -32,14 +32,14 @@ public class RegistrationController {
 
     @PostMapping("/user/registration")
     public ResponseEntity<String> registerUserAccount(
-            @RequestBody UserDto userDto, WebRequest request){
+            @RequestBody UserRegistrationDto userRegistrationDto, WebRequest request){
 
         try{
             String appUrl = request.getContextPath();
-            User registered = userService.registerNewUserAccount(userDto);
-            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, appUrl));
+            User registered = userService.registerNewUserAccount(userRegistrationDto);
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, registered, appUrl));
 
-        }catch(RegistrationException ex){
+        }catch(RegistrationException ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -53,9 +53,8 @@ public class RegistrationController {
 
         VerificationToken vt = userService.getVerificationToken(token);
 
-        if(vt == null){
+        if(vt == null)
             return new ResponseEntity<>("Invalid token.", HttpStatus.NOT_FOUND);
-        }
 
         User usr = vt.getUser();
         Calendar cal = Calendar.getInstance();
