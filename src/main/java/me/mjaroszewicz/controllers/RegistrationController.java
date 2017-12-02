@@ -48,7 +48,6 @@ public class RegistrationController {
 
     @GetMapping("/registrationConfirm")
     public ResponseEntity<String> confirmRegistration(
-            WebRequest request, Model mdl,
             @RequestParam String token){
 
         VerificationToken vt = userService.getVerificationToken(token);

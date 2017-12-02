@@ -5,6 +5,7 @@ import me.mjaroszewicz.entities.BalanceChange;
 import me.mjaroszewicz.entities.PasswordResetToken;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.events.OnPasswordResetEvent;
+import me.mjaroszewicz.pdf.PDFView;
 import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.slf4j.Logger;
@@ -17,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/user")
@@ -79,7 +83,6 @@ public class UserApiController {
         }
 
         return new ResponseEntity<>("Password successfully changed", HttpStatus.OK);
-
     }
 
     /**
@@ -94,6 +97,7 @@ public class UserApiController {
 
         return new ResponseEntity<String>("First name changed to " + value + ".", HttpStatus.OK);
     }
+
 
     @PostMapping("/forgotpassword")
     public ResponseEntity<String> requestPasswordReset(@RequestParam("email") String email, WebRequest request) {
@@ -121,6 +125,18 @@ public class UserApiController {
         }
 
         return new ResponseEntity<>("Could not change password. (Token invalid or expired)", HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @GetMapping("/pdf")
+    public ModelAndView downloadPDF(){
+
+        ArrayList<BalanceChange> list = new ArrayList<>();
+
+        list.add(new BalanceChange("title", "details", 500L, true, 15L));
+
+        ModelAndView ret = new ModelAndView();
+
+        return new ModelAndView(new PDFView(), "items", list);
     }
 
 
