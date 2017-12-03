@@ -29,7 +29,7 @@ public class PDFView extends AbstractITextPdfView {
         if((itemList = (ArrayList<BalanceChange>) model.get("items")) == null)
             throw new PdfBuildingException("Incorrectly passed list of items. (probably nullpointer?)");
 
-        PdfPTable table = new PdfPTable(4);
+        PdfPTable table = new PdfPTable(3);
         table.setWidthPercentage(100.0f);
         table.setSpacingBefore(15);
 
@@ -46,14 +46,14 @@ public class PDFView extends AbstractITextPdfView {
         cell.setPhrase(new Phrase("amount"));
         table.addCell(cell);
 
-        cell.setPhrase(new Phrase("negative"));
-        table.addCell(cell);
-
         itemList.forEach(e-> {
             table.addCell(e.getTitle());
             table.addCell(e.getDetails());
-            table.addCell("" + e.getAmount());
-            table.addCell("" + e.isExpense());
+
+            if(e.isExpense())
+                table.addCell("-" + e.getAmount());
+            else
+                table.addCell("" + e.getAmount());
         });
 
         doc.add(table);

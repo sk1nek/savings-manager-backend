@@ -9,9 +9,9 @@ import java.util.ArrayList;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
 
-    public User findOneByUsername(String username);
+    User findOneByUsername(String username);
 
-    public ArrayList<User> findAll();
+    ArrayList<User> findAll();
 
-    public User findByEmail(String email);
+    User findByEmail(String email);
 }

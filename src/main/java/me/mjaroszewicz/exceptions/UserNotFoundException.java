@@ -2,7 +2,7 @@ package me.mjaroszewicz.exceptions;
 
 public class UserNotFoundException extends Exception{
 
-    private String message;
+    private final String message;
 
     public UserNotFoundException(String msg){
         this.message = msg;

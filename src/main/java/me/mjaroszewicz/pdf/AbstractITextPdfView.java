@@ -11,9 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-
-
-
 public abstract class AbstractITextPdfView extends AbstractView {
 
     public AbstractITextPdfView(){
@@ -36,7 +33,6 @@ public abstract class AbstractITextPdfView extends AbstractView {
         Document document = new Document();
         PdfWriter writer = newWriter(document, baos);
         prepareWriter(model, writer, request);
-        buildPdfMetadata(model, document, request);
 
         document.open();
         buildPdfDocument(model, document, writer, request, response);
@@ -46,14 +42,11 @@ public abstract class AbstractITextPdfView extends AbstractView {
 
     }
 
-    protected PdfWriter newWriter(Document doc,
-                                  OutputStream os) throws DocumentException{
+    protected PdfWriter newWriter(Document doc, OutputStream os) throws DocumentException{
         return PdfWriter.getInstance(doc, os);
     }
 
-    protected void prepareWriter(Map<String, Object> model,
-                                 PdfWriter writer,
-                                 HttpServletRequest request) throws DocumentException{
+    protected void prepareWriter(Map<String, Object> model, PdfWriter writer, HttpServletRequest request) throws DocumentException{
 
         writer.setViewerPreferences(getViewerPreferences());
     }
@@ -62,18 +55,7 @@ public abstract class AbstractITextPdfView extends AbstractView {
         return PdfWriter.ALLOW_PRINTING;
     }
 
-    protected void buildPdfMetadata(Map<String, Object> model,
-                                    Document document,
-                                    HttpServletRequest request) {
-
-    }
-
-    protected abstract void buildPdfDocument(Map<String,Object> model,
-                                             Document doc,
-                                             PdfWriter writer,
-                                             HttpServletRequest request,
-                                             HttpServletResponse response) throws Exception;
-
+    protected abstract void buildPdfDocument(Map<String,Object> model, Document doc, PdfWriter writer, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 
 }

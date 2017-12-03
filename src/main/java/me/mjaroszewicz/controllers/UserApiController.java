@@ -73,7 +73,7 @@ public class UserApiController {
 
     /**
      * @param password new password, must be at least 8 characters long
-     * @return HTTP status 406 if password is too short, 200 if operation was succesful
+     * @return HTTP status 406 if password is too short, 200 if operation was successful
      */
     @PostMapping("/changepassword")
     public ResponseEntity<String> changeUserPassword(@Payload String password) {
@@ -93,9 +93,9 @@ public class UserApiController {
     public ResponseEntity<String> changeUserFirstName(@RequestParam("value") String value) {
 
             if(!userService.changeUserFirstName(securityService.getCurrentUser(), value))
-                return new ResponseEntity<String>("Name length should be between 3 and 32 characters.", HttpStatus.NOT_ACCEPTABLE);
+                return new ResponseEntity<>("Name length should be between 3 and 32 characters.", HttpStatus.NOT_ACCEPTABLE);
 
-        return new ResponseEntity<String>("First name changed to " + value + ".", HttpStatus.OK);
+        return new ResponseEntity<>("First name changed to " + value + ".", HttpStatus.OK);
     }
 
 

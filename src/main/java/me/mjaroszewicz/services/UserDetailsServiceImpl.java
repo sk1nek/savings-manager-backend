@@ -24,10 +24,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
 
-        boolean accountNonExpired = true;
-        boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;
-
         User user = userRepo.findOneByUsername(username);
 
         if(user == null) throw new UsernameNotFoundException("Username not found");
@@ -40,9 +36,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getUsername(),
                 user.getPassword(),
                 user.isEnabled(),
-                accountNonExpired,
-                credentialsNonExpired,
-                accountNonLocked,
+                true,
+                true,
+                true,
                 grantedAuthorities);
     }
 

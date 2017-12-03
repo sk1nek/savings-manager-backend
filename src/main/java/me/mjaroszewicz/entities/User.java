@@ -6,10 +6,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Entity
 public class User implements Serializable{
@@ -105,7 +102,7 @@ public class User implements Serializable{
 
     public boolean removeBalanceChange(Long id){
         for(BalanceChange bc: balanceChanges){
-            if(bc.getId() == id)
+            if(Objects.equals(bc.getId(), id))
                 return balanceChanges.remove(bc);
         }
 
