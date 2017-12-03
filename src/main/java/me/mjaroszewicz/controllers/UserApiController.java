@@ -5,19 +5,23 @@ import me.mjaroszewicz.entities.BalanceChange;
 import me.mjaroszewicz.entities.PasswordResetToken;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.events.OnPasswordResetEvent;
+import me.mjaroszewicz.exceptions.StorageException;
 import me.mjaroszewicz.pdf.PDFView;
 import me.mjaroszewicz.services.SecurityService;
+import me.mjaroszewicz.services.ProfilePictureStorageService;
 import me.mjaroszewicz.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -37,6 +41,9 @@ public class UserApiController {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private ProfilePictureStorageService profilePictureStorageService;
+
     @GetMapping(value = {"", "/"})
     public User getCurrentUser() {
         User usr = securityService.getCurrentUser();
@@ -45,7 +52,7 @@ public class UserApiController {
     }
 
     @PostMapping("/addbalancechange")
-    public ResponseEntity<String> addBalanceChange(@RequestBody BalanceChangeDto dto){
+    public ResponseEntity<String> addBalanceChange(@RequestBody BalanceChangeDto dto) {
 
         BalanceChange bc = new BalanceChange();
         bc.setDetails(dto.getDetails());
@@ -62,7 +69,7 @@ public class UserApiController {
     }
 
     @PostMapping("/removebalancechange")
-    public ResponseEntity<String>removeBalanceChange(@RequestParam Long id){
+    public ResponseEntity<String> removeBalanceChange(@RequestParam Long id) {
 
         User usr = getCurrentUser();
         usr.removeBalanceChange(id);
@@ -78,7 +85,7 @@ public class UserApiController {
     @PostMapping("/changepassword")
     public ResponseEntity<String> changeUserPassword(@Payload String password) {
 
-        if(userService.changeCurrentUserPassword(password)){
+        if (userService.changeCurrentUserPassword(password)) {
             return new ResponseEntity<>("Password too short", HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -92,8 +99,8 @@ public class UserApiController {
     @PostMapping("/changefirstname")
     public ResponseEntity<String> changeUserFirstName(@RequestParam("value") String value) {
 
-            if(!userService.changeUserFirstName(securityService.getCurrentUser(), value))
-                return new ResponseEntity<>("Name length should be between 3 and 32 characters.", HttpStatus.NOT_ACCEPTABLE);
+        if (!userService.changeUserFirstName(securityService.getCurrentUser(), value))
+            return new ResponseEntity<>("Name length should be between 3 and 32 characters.", HttpStatus.NOT_ACCEPTABLE);
 
         return new ResponseEntity<>("First name changed to " + value + ".", HttpStatus.OK);
     }
@@ -104,7 +111,7 @@ public class UserApiController {
 
         User usr;
 
-        if((usr = userService.findUserByEmail(email)) == null)
+        if ((usr = userService.findUserByEmail(email)) == null)
             return new ResponseEntity<>("Invalid e-mail, try again. ", HttpStatus.NOT_FOUND);
         else
             eventPublisher.publishEvent(new OnPasswordResetEvent(this, usr, request.getContextPath()));
@@ -115,7 +122,7 @@ public class UserApiController {
     @PostMapping("/passwordreset")
     public ResponseEntity<String> userPasswordReset(
             @RequestParam("token") String token,
-            @RequestParam("password") String password){
+            @RequestParam("password") String password) {
 
         PasswordResetToken passwordResetToken;
 
@@ -128,18 +135,41 @@ public class UserApiController {
     }
 
     @GetMapping("/pdf")
-    public ModelAndView downloadPDF(){
-
-        ArrayList<BalanceChange> list = new ArrayList<>();
-
-        list.add(new BalanceChange("title", "details", 500L, true, 15L));
+    public ModelAndView downloadPDF() {
 
         ModelAndView ret = new ModelAndView();
+
+        ArrayList<BalanceChange> list = new ArrayList<>();
+        list.addAll(securityService.getCurrentUser().getBalanceChanges());
 
         return new ModelAndView(new PDFView(), "items", list);
     }
 
+    @PostMapping("/uploadprofilepic")
+    public ResponseEntity<String> handleProfilePicUpload(@RequestParam("file") MultipartFile file) throws StorageException{
 
+        User usr = securityService.getCurrentUser();
+
+        profilePictureStorageService.storeProfilePic(file, usr.getUsername());
+
+        return new ResponseEntity<>("Upload succesful. ", HttpStatus.OK);
+    }
+
+    @GetMapping("/getprofilepicture")
+    @ResponseBody
+    public ResponseEntity<Resource> serveProfilePicture() throws StorageException{
+
+        User usr = securityService.getCurrentUser();
+        Resource resource = profilePictureStorageService.loadAsResource(usr.getUsername());
+
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"").body(resource);
+
+    }
+
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<?> handleStorageException(StorageException ex){
+        return ResponseEntity.notFound().build();
+    }
 
 
 }

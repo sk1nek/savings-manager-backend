@@ -29,6 +29,9 @@ public class User implements Serializable{
     @Type(type = "yes_no")
     private boolean enabled;
 
+    @Column(name = "has_picture")
+    private boolean hasProfilePic;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -78,6 +81,14 @@ public class User implements Serializable{
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean hasProfilePic() {
+        return hasProfilePic;
+    }
+
+    public void setHasProfilePic(boolean hasProfilePic) {
+        this.hasProfilePic = hasProfilePic;
     }
 
     public String getFirstName() {
@@ -139,17 +150,5 @@ public class User implements Serializable{
                 ", roles=" + roles +
                 '}';
     }
-
-//    @JsonIgnore
-//    public User getSanitizedUser(){
-//        User ret = new User();
-//        ret.username = this.username;
-//        ret.balanceChanges = this.balanceChanges;
-//        ret.id = this.id;
-//        ret.email = this.email;
-//        ret.firstName = firstName;
-//
-//        return ret;
-//    }
 
 }
