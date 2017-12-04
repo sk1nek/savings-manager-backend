@@ -120,9 +120,7 @@ public class UserApiController {
     }
 
     @PostMapping("/passwordreset")
-    public ResponseEntity<String> userPasswordReset(
-            @RequestParam("token") String token,
-            @RequestParam("password") String password) {
+    public ResponseEntity<String> userPasswordReset(@RequestParam("token") String token, @RequestParam("password") String password) {
 
         PasswordResetToken passwordResetToken;
 
