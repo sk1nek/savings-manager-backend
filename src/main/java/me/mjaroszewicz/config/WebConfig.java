@@ -12,5 +12,9 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
+    @Bean
+    ProfilePictureStorageProps profilePictureStorageProps(){
+        return new ProfilePictureStorageProps();
+    }
 
 }
