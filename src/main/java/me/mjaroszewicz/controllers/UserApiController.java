@@ -1,5 +1,6 @@
 package me.mjaroszewicz.controllers;
 
+import me.mjaroszewicz.annotations.ValidFirstName;
 import me.mjaroszewicz.dtos.BalanceChangeDto;
 import me.mjaroszewicz.entities.BalanceChange;
 import me.mjaroszewicz.entities.PasswordResetToken;
@@ -97,7 +98,7 @@ public class UserApiController {
      * @return 406 if new name is either too short or too long (accepted length is 3-32 characters)
      */
     @PostMapping("/changefirstname")
-    public ResponseEntity<String> changeUserFirstName(@RequestParam("value") String value) {
+    public ResponseEntity<String> changeUserFirstName(@RequestParam("value") @ValidFirstName String value) {
 
         if (!userService.changeUserFirstName(securityService.getCurrentUser(), value))
             return new ResponseEntity<>("Name length should be between 3 and 32 characters.", HttpStatus.NOT_ACCEPTABLE);
