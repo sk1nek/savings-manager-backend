@@ -2,6 +2,7 @@ package me.mjaroszewicz.controllers;
 
 
 import me.mjaroszewicz.entities.User;
+import me.mjaroszewicz.services.AnnouncingService;
 import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdminApiController {
 
     @Autowired
-    private SecurityService securityService;
+    private AnnouncingService announcingService;
 
     @Autowired
     private UserService userService;
@@ -64,6 +67,13 @@ public class AdminApiController {
             return new ResponseEntity<>("User successfully updated", HttpStatus.OK);
 
         return new ResponseEntity<>("User not found. ", HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/announce")
+    public ResponseEntity<String> sendAnnouncement(@RequestParam(required = true) String announcement){
+
+        announcingService.publishAnnouncement(announcement);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
