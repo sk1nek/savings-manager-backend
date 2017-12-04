@@ -1,12 +1,14 @@
 package me.mjaroszewicz.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Properties;
 
 @Service
@@ -15,20 +17,31 @@ public class MailService {
     @Autowired
     MailService(){}
 
+    @Value("${email.user}")
+    private String emailUserName;
+
+    @Value("${email.password}")
+    private String emailPassword;
+
+    @Value("${email.host}")
+    private String emailHost;
+
+
+
     @Bean
     private JavaMailSenderImpl mailSender(){
 
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
         Properties props = new Properties();
-        props.put("mail.smtp.user", "janekmarcinjanek@gmail.com");
-        props.put("mail.smtp.from", "janekmarcinjanek@gmail.com");
-        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.user", emailUserName);
+        props.put("mail.smtp.from", emailUserName);
+        props.put("mail.smtp.host", emailHost);
         props.put("mail.smtp.starttls.enable", true);
         props.put("mail.smtp.port", 587);
         props.put("mail.smtp.auth", true);
 
-        mailSender.setPassword("foobarfoobar");
+        mailSender.setPassword(emailPassword);
 
         mailSender.setJavaMailProperties(props);
 
@@ -47,7 +60,5 @@ public class MailService {
 
         mailSender.send(message);
     }
-
-
 
 }
