@@ -163,7 +163,6 @@ public class UserApiController {
         Resource resource = profilePictureStorageService.loadAsResource(usr.getUsername());
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"").body(resource);
-
     }
 
     @ExceptionHandler(StorageException.class)

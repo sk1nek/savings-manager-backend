@@ -2,7 +2,9 @@ package me.mjaroszewicz.services;
 
 
 import me.mjaroszewicz.config.ProfilePictureStorageProps;
+import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.exceptions.StorageException;
+import me.mjaroszewicz.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class ProfilePictureStorageService {
     private final static Logger log = LoggerFactory.getLogger(ProfilePictureStorageService.class);
 
     @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
     public ProfilePictureStorageService(ProfilePictureStorageProps properties){
         this.root = Paths.get(properties.getLocation());
     }
@@ -46,6 +51,10 @@ public class ProfilePictureStorageService {
         }catch(IOException | StorageException ex){
             throw new StorageException("Failed to storeProfilePic: " + filename);
         }
+
+        User user = userRepo.findOneByUsername(username);
+        user.setHasProfilePic(true);
+        userRepo.save(user);
     }
 
     public Path load(String filename){
@@ -66,6 +75,17 @@ public class ProfilePictureStorageService {
         } catch (MalformedURLException mux) {
             throw new StorageException("Could not read file: " + filename);
         }
+    }
+
+    public void deleteUserPic(User usr){
+        try{
+            Files.delete(root.resolve(usr.getUsername()));
+        }catch(IOException ioex){
+            log.error(ioex.getMessage(), ioex);
+        }
+
+        usr.setHasProfilePic(false);
+        userRepo.save(usr);
     }
 
     public void deleteAll(){
