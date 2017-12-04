@@ -88,15 +88,14 @@ public class UserService {
      * @param pwd New password
      * @return false if password is shorter than 8 characters
      */
-    public boolean changeUserPassword(User usr, String pwd) {
+    public void changeUserPassword(User usr, String pwd) {
 
         if(pwd.length() < 8)
-            return false;
+            return;
 
         usr.setPassword(passwordEncoder().encode(pwd));
         userRepo.save(usr);
 
-        return true;
     }
 
     /**

@@ -22,10 +22,10 @@ public class VerificationToken {
 
     private Date expiryDate;
 
-    private Date calculateExpiryDate(int expiryTimeMinutes){
+    private Date calculateExpiryDate(){
         Calendar cal = Calendar.getInstance();
         cal.setTime(cal.getTime());
-        cal.add(Calendar.MINUTE, expiryTimeMinutes);
+        cal.add(Calendar.MINUTE, VerificationToken.EXPIRATION);
 
         return new Date(cal.getTime().getTime());
     }
@@ -67,6 +67,6 @@ public class VerificationToken {
     }
 
     public VerificationToken(){
-        this.expiryDate = calculateExpiryDate(EXPIRATION);
+        this.expiryDate = calculateExpiryDate();
     }
 }

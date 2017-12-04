@@ -1,7 +1,5 @@
 package me.mjaroszewicz.entities;
 
-import me.mjaroszewicz.entities.User;
-
 import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,10 +21,10 @@ public class PasswordResetToken {
 
     private Date expiryDate;
 
-    private Date calculateExpiryDate(int expiryTimeMinutes){
+    private Date calculateExpiryDate(){
         Calendar cal = Calendar.getInstance();
         cal.setTime(cal.getTime());
-        cal.add(Calendar.MINUTE, expiryTimeMinutes);
+        cal.add(Calendar.MINUTE, PasswordResetToken.EXPIRATION);
 
         return new Date(cal.getTime().getTime());
     }
@@ -68,6 +66,6 @@ public class PasswordResetToken {
     }
 
     public PasswordResetToken(){
-        this.expiryDate = calculateExpiryDate(EXPIRATION);
+        this.expiryDate = calculateExpiryDate();
     }
 }

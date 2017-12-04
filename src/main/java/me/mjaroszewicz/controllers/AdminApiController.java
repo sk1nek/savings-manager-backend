@@ -55,8 +55,8 @@ public class AdminApiController {
 
     @DeleteMapping("/deleteuser")
     public ResponseEntity<String> deleteUser(
-            @RequestParam(value = "byname", required = true) Boolean byName,
-            @RequestParam(value = "identifier", required = true) String identifier) {
+            @RequestParam(value = "byname") Boolean byName,
+            @RequestParam(value = "identifier") String identifier) {
 
         if (byName && userService.deleteUser(identifier))
             return new ResponseEntity<>("User deleted successfully. ", HttpStatus.OK);
@@ -77,14 +77,14 @@ public class AdminApiController {
     }
 
     @PostMapping("/announce")
-    public ResponseEntity<String> sendAnnouncement(@RequestParam(required = true) String announcement){
+    public ResponseEntity<String> sendAnnouncement(@RequestParam() String announcement){
 
         announcingService.publishAnnouncement(announcement);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/uploaduserpicture")
-    public ResponseEntity<String> uploadUserProfilePic(@RequestParam(required = true)MultipartFile file, String username){
+    public ResponseEntity<String> uploadUserProfilePic(@RequestParam()MultipartFile file, String username){
 
         try{
             profileService.storeProfilePic(file, username);
@@ -97,7 +97,7 @@ public class AdminApiController {
 
 
     @PostMapping("/deleteuserpicture")
-    public ResponseEntity<String> removeUserProfilePic(@RequestParam(required = true) String username){
+    public ResponseEntity<String> removeUserProfilePic(@RequestParam() String username){
 
         if(profileService.deleteUserPic(userService.findUser(username)))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

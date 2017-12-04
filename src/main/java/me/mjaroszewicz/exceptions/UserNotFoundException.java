@@ -1,6 +1,6 @@
 package me.mjaroszewicz.exceptions;
 
-public class UserNotFoundException extends Exception{
+class UserNotFoundException extends Exception{
 
     private final String message;
 

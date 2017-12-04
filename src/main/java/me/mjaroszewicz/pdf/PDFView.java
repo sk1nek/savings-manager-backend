@@ -17,6 +17,7 @@ import java.util.Map;
 public class PDFView extends AbstractITextPdfView {
 
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void buildPdfDocument(Map<String, Object> model,
                                     Document doc,

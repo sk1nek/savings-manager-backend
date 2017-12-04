@@ -11,9 +11,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-public abstract class AbstractITextPdfView extends AbstractView {
+abstract class AbstractITextPdfView extends AbstractView {
 
-    public AbstractITextPdfView(){
+    AbstractITextPdfView(){
         setContentType("application/pdf");
     }
 
@@ -42,16 +42,17 @@ public abstract class AbstractITextPdfView extends AbstractView {
 
     }
 
-    protected PdfWriter newWriter(Document doc, OutputStream os) throws DocumentException{
+    private PdfWriter newWriter(Document doc, OutputStream os) throws DocumentException{
         return PdfWriter.getInstance(doc, os);
     }
 
-    protected void prepareWriter(Map<String, Object> model, PdfWriter writer, HttpServletRequest request) throws DocumentException{
+    private void prepareWriter(Map<String, Object> model, PdfWriter writer, HttpServletRequest request) {
 
         writer.setViewerPreferences(getViewerPreferences());
     }
 
-    protected int getViewerPreferences(){
+    @SuppressWarnings("SameReturnValue")
+    private int getViewerPreferences(){
         return PdfWriter.ALLOW_PRINTING;
     }
 

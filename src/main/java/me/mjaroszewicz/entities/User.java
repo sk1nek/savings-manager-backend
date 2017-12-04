@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
+@SuppressWarnings("UnusedReturnValue")
 @Entity
 public class User implements Serializable{
 

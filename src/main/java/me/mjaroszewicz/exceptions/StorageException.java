@@ -2,7 +2,7 @@ package me.mjaroszewicz.exceptions;
 
 public class StorageException extends Exception {
 
-    private String message;
+    private final String message;
 
     public StorageException(String msg){
         this.message = msg;
