@@ -8,7 +8,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Properties;
 
 @Service
@@ -26,8 +25,6 @@ public class MailService {
     @Value("${email.host}")
     private String emailHost;
 
-
-
     @Bean
     private JavaMailSenderImpl mailSender(){
 
@@ -42,7 +39,6 @@ public class MailService {
         props.put("mail.smtp.auth", true);
 
         mailSender.setPassword(emailPassword);
-
         mailSender.setJavaMailProperties(props);
 
         return mailSender;

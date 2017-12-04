@@ -77,15 +77,17 @@ public class ProfilePictureStorageService {
         }
     }
 
-    public void deleteUserPic(User usr){
+    public boolean deleteUserPic(User usr){
         try{
             Files.delete(root.resolve(usr.getUsername()));
         }catch(IOException ioex){
             log.error(ioex.getMessage(), ioex);
+            return false;
         }
 
         usr.setHasProfilePic(false);
         userRepo.save(usr);
+        return true;
     }
 
     public void deleteAll(){

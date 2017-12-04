@@ -1,14 +1,18 @@
 package me.mjaroszewicz.controllers;
 
 
+import me.mjaroszewicz.config.ProfilePictureStorageProps;
 import me.mjaroszewicz.entities.User;
+import me.mjaroszewicz.exceptions.StorageException;
 import me.mjaroszewicz.services.AnnouncingService;
+import me.mjaroszewicz.services.ProfilePictureStorageService;
 import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.ws.Response;
 
@@ -21,6 +25,9 @@ public class AdminApiController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProfilePictureStorageService profileService;
 
     @PostMapping("/getuserbyid")
     public ResponseEntity<Object> getUserById(
@@ -73,6 +80,28 @@ public class AdminApiController {
     public ResponseEntity<String> sendAnnouncement(@RequestParam(required = true) String announcement){
 
         announcingService.publishAnnouncement(announcement);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/uploaduserpicture")
+    public ResponseEntity<String> uploadUserProfilePic(@RequestParam(required = true)MultipartFile file, String username){
+
+        try{
+            profileService.storeProfilePic(file, username);
+        }catch(StorageException sex){
+            return new ResponseEntity<>(sex.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @PostMapping("/deleteuserpicture")
+    public ResponseEntity<String> removeUserProfilePic(@RequestParam(required = true) String username){
+
+        if(profileService.deleteUserPic(userService.findUser(username)))
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
