@@ -1,5 +1,6 @@
 package me.mjaroszewicz.controllers;
 
+import me.mjaroszewicz.annotations.ValidUserDto;
 import me.mjaroszewicz.events.OnRegistrationCompleteEvent;
 import me.mjaroszewicz.dtos.UserRegistrationDto;
 import me.mjaroszewicz.entities.User;
@@ -12,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -32,7 +35,10 @@ public class RegistrationController {
 
     @PostMapping("/user/registration")
     public ResponseEntity<String> registerUserAccount(
-            @RequestBody UserRegistrationDto userRegistrationDto, WebRequest request){
+            @RequestParam("user") @ValidUserDto UserRegistrationDto userRegistrationDto, WebRequest request, Errors err){
+
+        if(err.hasErrors())
+            return new ResponseEntity<>("Invalid credentials", HttpStatus.NOT_ACCEPTABLE);
 
         try{
             String appUrl = request.getContextPath();

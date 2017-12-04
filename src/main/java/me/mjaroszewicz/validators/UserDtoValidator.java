@@ -15,7 +15,6 @@ public class UserDtoValidator implements ConstraintValidator<ValidUserDto, UserR
     @Override
     public boolean isValid(UserRegistrationDto value, ConstraintValidatorContext context) {
 
-
         boolean validUsername = value.getUsername().matches("/^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/");
 
         //at least one character, one digit, one character that does not belong in a-zA-Z0-9 and at least 6 characters
