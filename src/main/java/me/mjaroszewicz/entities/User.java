@@ -40,6 +40,9 @@ public class User implements Serializable{
     @JoinColumn(name = "changes")
     private List<BalanceChange> balanceChanges;
 
+    @Column(name = "monthly_budget")
+    private Long monthlyBudget;
+
     @Column(name = "roles")
     @ElementCollection
     private List<String> roles;
@@ -119,6 +122,14 @@ public class User implements Serializable{
         }
 
         return false;
+    }
+
+    public Long getMonthlyBudget() {
+        return monthlyBudget;
+    }
+
+    public void setMonthlyBudget(Long monthlyBudget) {
+        this.monthlyBudget = monthlyBudget;
     }
 
     public List<String> getRoles() {
