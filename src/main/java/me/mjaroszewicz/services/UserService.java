@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -237,6 +238,10 @@ public class UserService {
 
     public User findUserByEmail(String email){
         return userRepo.findByEmail(email);
+    }
+
+    public ArrayList<User> findAllUsers(){
+        return userRepo.findAll();
     }
 
     public void saveUser(User usr){

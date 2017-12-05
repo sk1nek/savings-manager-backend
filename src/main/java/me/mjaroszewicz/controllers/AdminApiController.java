@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.ws.Response;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -103,6 +104,14 @@ public class AdminApiController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<ArrayList<User>> getAllUsers(){
+
+        ArrayList<User> query = userService.findAllUsers();
+
+        return new ResponseEntity<ArrayList<User>>(query, HttpStatus.FOUND);
     }
 
 }
