@@ -1,6 +1,7 @@
 package me.mjaroszewicz.controllers;
 
 import me.mjaroszewicz.annotations.ValidFirstName;
+import me.mjaroszewicz.annotations.ValidPassword;
 import me.mjaroszewicz.dtos.BalanceChangeDto;
 import me.mjaroszewicz.entities.BalanceChange;
 import me.mjaroszewicz.entities.PasswordResetToken;
@@ -8,8 +9,8 @@ import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.events.OnPasswordResetEvent;
 import me.mjaroszewicz.exceptions.StorageException;
 import me.mjaroszewicz.pdf.PDFView;
-import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.ProfilePictureStorageService;
+import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,7 +86,10 @@ public class UserApiController {
      * @return HTTP status 406 if password is too short, 200 if operation was successful
      */
     @PostMapping("/changepassword")
-    public ResponseEntity<String> changeUserPassword(@Payload String password) {
+    public ResponseEntity<String> changeUserPassword(@Payload @ValidPassword String password, Errors err) {
+
+        if(err.hasErrors())
+            return new ResponseEntity<String>(HttpStatus.NOT_ACCEPTABLE);
 
         if (userService.changeCurrentUserPassword(password)) {
             return new ResponseEntity<>("Password too short", HttpStatus.NOT_ACCEPTABLE);
@@ -93,15 +98,14 @@ public class UserApiController {
         return new ResponseEntity<>("Password successfully changed", HttpStatus.OK);
     }
 
-    /**
-     * @param value new name
-     * @return 406 if new name is either too short or too long (accepted length is 3-32 characters)
-     */
     @PostMapping("/changefirstname")
-    public ResponseEntity<String> changeUserFirstName(@RequestParam("value") @ValidFirstName String value) {
+    public ResponseEntity<String> changeUserFirstName(@RequestParam("value") @ValidFirstName String value, Errors err) {
+
+        if(err.hasErrors())
+            return new ResponseEntity<String>(HttpStatus.NOT_ACCEPTABLE);
 
         if (!userService.changeUserFirstName(securityService.getCurrentUser(), value))
-            return new ResponseEntity<>("Name length should be between 3 and 32 characters.", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
         return new ResponseEntity<>("First name changed to " + value + ".", HttpStatus.OK);
     }
@@ -121,7 +125,10 @@ public class UserApiController {
     }
 
     @PostMapping("/passwordreset")
-    public ResponseEntity<String> userPasswordReset(@RequestParam("token") String token, @RequestParam("password") String password) {
+    public ResponseEntity<String> userPasswordReset(@RequestParam("token") String token, @RequestParam("password") @ValidPassword String password, Errors err) {
+
+        if(err.hasErrors())
+            return new ResponseEntity<String>("Invalid password", HttpStatus.NOT_ACCEPTABLE);
 
         PasswordResetToken passwordResetToken;
 
