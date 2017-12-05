@@ -1,12 +1,10 @@
 package me.mjaroszewicz.controllers;
 
 
-import me.mjaroszewicz.config.ProfilePictureStorageProps;
 import me.mjaroszewicz.entities.User;
 import me.mjaroszewicz.exceptions.StorageException;
 import me.mjaroszewicz.services.AnnouncingService;
 import me.mjaroszewicz.services.ProfilePictureStorageService;
-import me.mjaroszewicz.services.SecurityService;
 import me.mjaroszewicz.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.ws.Response;
 import java.util.ArrayList;
 
 @RestController

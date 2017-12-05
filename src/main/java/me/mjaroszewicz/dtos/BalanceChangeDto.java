@@ -1,7 +1,5 @@
 package me.mjaroszewicz.dtos;
 
-import java.io.Serializable;
-
 public class BalanceChangeDto{
 
     private String title;
