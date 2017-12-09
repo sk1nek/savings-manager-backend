@@ -39,9 +39,6 @@ public class UserService {
     private MailService mailService;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-    @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepo;
 
     @Bean
@@ -50,9 +47,7 @@ public class UserService {
     }
 
     @Transactional
-    public User registerNewUserAccount(UserRegistrationDto userdto) throws RegistrationException {
-
-        if(!isValidUser(userdto)) throw new RegistrationException("DTO didn't meet specified criteria");
+    public User registerNewUserAccount(UserRegistrationDto userdto) throws RegistrationException{
 
         if(userRepo.findByEmail(userdto.getEmail()) != null)
             throw new RegistrationException("Username already taken");
@@ -64,22 +59,6 @@ public class UserService {
         user.setFirstName(userdto.getFirstName());
 
         return userRepo.save(user);
-    }
-
-    /**
-     *
-     * @param user Data Transfer Object containing user credentials
-     * @return true if length criteria are met (username at least 6 characters / password at least 8)
-     */
-    private boolean isValidUser(UserRegistrationDto user){
-
-        if(user.getPassword() == null || user.getUsername() == null)
-            return false;
-
-        if((user.getUsername().length() < 6) || (user.getUsername().length() > 32))
-            return false;
-
-        return (user.getPassword().length() >= 8) && (user.getPassword().length() <= 32);
     }
 
     /**
@@ -185,10 +164,6 @@ public class UserService {
 
     public boolean changeUserFirstName(User usr, String name){
 
-        log.error(usr.toString());
-
-//        User usr = userRepo.findOneByUsername(username);
-
         if(name.length() < 2 || name.length() > 32)
             return false;
 
@@ -238,6 +213,15 @@ public class UserService {
 
     public User findUserByEmail(String email){
         return userRepo.findByEmail(email);
+    }
+
+    public boolean userExists(Long id) {
+        return userRepo.exists(id);
+    }
+
+    public boolean userExists(String username){
+        return userRepo.findOneByUsername(username) != null;
+
     }
 
     public ArrayList<User> findAllUsers(){

@@ -101,7 +101,6 @@ public class UserApiController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-
     /**
      * @param password new password, must be at least 8 characters long
      * @return HTTP status 406 if password is too short, 200 if operation was successful

@@ -40,6 +40,9 @@ public class RegistrationController {
         if(err.hasErrors())
             return new ResponseEntity<>("Invalid credentials", HttpStatus.NOT_ACCEPTABLE);
 
+        if(userService.userExists(userRegistrationDto.getUsername()))
+            return new ResponseEntity<>("Username already exists", HttpStatus.NOT_ACCEPTABLE);
+
         try{
             String appUrl = request.getContextPath();
             User registered = userService.registerNewUserAccount(userRegistrationDto);
