@@ -33,6 +33,12 @@ public class RegistrationController {
     @Autowired
     ApplicationEventPublisher eventPublisher;
 
+    /**
+     *
+     * @param userRegistrationDto Data Transfer Object containing registration credentials
+     * @param err Validation errors provided by Spring
+     * @return HTTP 200 on success, 406 and error message if any difficulties were to be encountered
+     */
     @PostMapping("/user/registration")
     public ResponseEntity<String> registerUserAccount(
             @RequestParam("user") @ValidUserDto UserRegistrationDto userRegistrationDto, WebRequest request, Errors err){
@@ -55,6 +61,11 @@ public class RegistrationController {
         return new ResponseEntity<>("Account successfully registered, check your mailbox for confirmation e-mail.", HttpStatus.OK);
     }
 
+    /**
+     * Confirms user e-mail address and enables account if provided token is valid
+     * @param token - token sent in e-mail on registration
+     * @return HTTP 200 on success, 406/404 and a message on fail.
+     */
     @GetMapping("/registrationConfirm")
     public ResponseEntity<String> confirmRegistration(
             @RequestParam String token){
@@ -78,6 +89,13 @@ public class RegistrationController {
 
     }
 
+    /**
+     * Re-sends user confirmation email.
+     *
+     * @param username Target user name
+     * @param request Provided by Spring
+     * @return HTTP 200 on success, 406 and an error on fail
+     */
     @GetMapping("/resendconfirmation")
     public ResponseEntity<String> resendConfirmation(
             @RequestParam("username") String username,
