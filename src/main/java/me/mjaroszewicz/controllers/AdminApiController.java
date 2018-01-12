@@ -27,6 +27,10 @@ public class AdminApiController {
     @Autowired
     private ProfilePictureStorageService profileService;
 
+    /**
+     * @param id requested user id
+     * @return Requested user represented as Json string.
+     */
     @PostMapping("/getuserbyid")
     public ResponseEntity<Object> getUserById(
             @RequestParam("id") Long id) {
@@ -39,6 +43,11 @@ public class AdminApiController {
         return new ResponseEntity<>(usr, HttpStatus.FOUND);
     }
 
+    /**
+     *
+     * @param name requested user name
+     * @return Requested user represented as Json string.
+     */
     @PostMapping("/getuserbyname")
     public ResponseEntity<Object> getUserByName(
             @RequestParam("name") String name){
@@ -51,6 +60,12 @@ public class AdminApiController {
         return new ResponseEntity<>(usr, HttpStatus.FOUND);
     }
 
+    /**
+     * Deletes specified user either by name or numerical ID (byName == false)
+     * @param byName Boolean flag specifying if username should be used as identifier. If it's false, ID is numerical.
+     * @param identifier String used to identify user - either username or numerical ID according to byName flag
+     * @return ResponseEntity with HttpStatus - 200 on success / 404 on fail
+     */
     @DeleteMapping("/deleteuser")
     public ResponseEntity<String> deleteUser(
             @RequestParam(value = "byname") Boolean byName,
@@ -65,6 +80,11 @@ public class AdminApiController {
         return new ResponseEntity<>("Could not delete specified user. ", HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Looks into persistance layer if username with same id/username exists. If yes, existing one is updated with details from arg.
+     * @param user
+     * @return HTTP 200 / 404 depending on result
+     */
     @PatchMapping("/updateuser")
     public ResponseEntity<String> updateUser(@RequestBody User user) {
 
@@ -74,6 +94,11 @@ public class AdminApiController {
         return new ResponseEntity<>("User not found. ", HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Sends message to all sockets subscribed to /announcement
+     * @param announcement - Message to be announced
+     * @return HTTP 200 on success
+     */
     @PostMapping("/announce")
     public ResponseEntity<String> sendAnnouncement(@RequestParam() String announcement){
 
@@ -81,8 +106,15 @@ public class AdminApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Uploads new user-specific profile picture.
+     *
+     * @param file File containing new profile picture
+     * @param username Name of user to have picture changed
+     * @return HTTP 200 on success / 406 on fail
+     */
     @PostMapping("/uploaduserpicture")
-    public ResponseEntity<String> uploadUserProfilePic(@RequestParam()MultipartFile file, String username){
+    public ResponseEntity<String> uploadUserProfilePic(@RequestParam MultipartFile file, String username){
 
         try{
             profileService.storeProfilePic(file, username);
@@ -94,8 +126,14 @@ public class AdminApiController {
     }
 
 
+    /**
+     * Deletes profile picture of user with username specified in arg
+     *
+     * @param username - Target user name
+     * @return HTTP 200 or 404 whether operation succeeds or not
+     */
     @PostMapping("/deleteuserpicture")
-    public ResponseEntity<String> removeUserProfilePic(@RequestParam() String username){
+    public ResponseEntity<String> removeUserProfilePic(@RequestParam String username){
 
         if(profileService.deleteUserPic(userService.findUser(username)))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -103,6 +141,9 @@ public class AdminApiController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * @return all users in list.
+     */
     @GetMapping
     public ResponseEntity<ArrayList<User>> getAllUsers(){
 
