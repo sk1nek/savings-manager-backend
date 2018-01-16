@@ -1,4 +1,4 @@
-package me.unnecessary.services;
+package me.mjaroszewicz.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
